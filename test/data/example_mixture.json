@@ -1,0 +1,38 @@
+{
+  "latent_dim": 8,
+  "classes": ["A", "B"],
+  "components": [
+    {
+      "name": "scalar covariance",
+      "weight": 0.5,
+      "mean": [2, 0, 0, 0],
+      "covariance": {"type": "scalar", "variance": 0.5},
+      "label_probs": [0.9, 0.1]
+    },
+    {
+      "name": "diagonal covariance",
+      "weight": 0.3,
+      "mean": [-2, 1, 0, 0],
+      "covariance": {"type": "diagonal", "variances": [0.5, 1.0, 0.3, 0.3]},
+      "label_probs": [0.2, 0.8]
+    },
+    {
+      "name": "low-rank + diagonal",
+      "weight": 0.1,
+      "mean": [0, -2, 2, 0],
+      "covariance": {"type": "low_rank",
+                     "factor": [[1.0], [0.8], [0.0], [0.5]],
+                     "psi": [0.2, 0.2, 0.4, 0.4]},
+      "label_probs": [0.5, 0.5]
+    },
+    {
+      "name": "std + correlation",
+      "weight": 0.1,
+      "mean": [0, 0, -2, 2],
+      "covariance": {"type": "std_corr",
+                     "std": [0.6, 0.6, 1.0, 0.8],
+                     "correlation": [[1, 0.5, 0, 0], [0.5, 1, 0, 0], [0, 0, 1, -0.3], [0, 0, -0.3, 1]]},
+      "label_probs": [0.1, 0.9]
+    }
+  ]
+}
