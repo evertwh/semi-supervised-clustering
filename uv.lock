@@ -295,6 +295,8 @@ dependencies = [
     { name = "pydantic-settings", version = "2.15.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "pydantic-settings", version = "2.16.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pytest" },
+    { name = "scikit-learn", version = "1.7.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scikit-learn", version = "1.9.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "umap-learn" },
 ]
 
@@ -305,6 +307,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.14.1" },
     { name = "pydantic-settings", specifier = ">=2.15.0" },
     { name = "pytest", specifier = ">=9.2.0" },
+    { name = "scikit-learn", specifier = ">=1.7.2" },
     { name = "umap-learn", specifier = ">=0.5.12" },
 ]
 

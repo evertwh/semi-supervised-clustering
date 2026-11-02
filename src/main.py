@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
+from pathlib import Path
+from typing import Optional
 
 import numpy as np
-from matplotlib import pyplot as plt
 from pydantic_settings import SettingsConfigDict
 from pydantic import Field
 
 from data_generator import data_generator
 from data_generator.MixtureConfig import MixtureConfig
-from plot import plot_umap
 
 
 class CliMixtureConfig(MixtureConfig):
@@ -16,33 +16,42 @@ class CliMixtureConfig(MixtureConfig):
         cli_kebab_case=True,  # --n-components instead of --n_components
         cli_implicit_flags=True,  # --standardise / --no-standardise
     )
-    out: str = "output/synthetic_latents.npz"
+    out: Path = Field(Path("output/synthetic_latents.npz"), description="Where to save the generated data (.npz)")
     plot: bool = Field(True, description="Generate Umap validation of generated data")
+    plot_out: Optional[Path] = Field(None, description="Save the UMAP plot to this file instead of showing it")
+
+
+def summarise(data: dict, out: Path) -> None:
+    """Print a short summary of the generated data."""
+    # x_u, x_l, y_l = data["x_unlabelled"], data["x_labelled"], data["y_labelled"]
+    print(f"Saved {out}")
+    print(f"Unlabelled: {data['x_unlabelled'].shape}   labelled: {data['x_labelled'].shape}")
+    counts = np.bincount(data["y_labelled"], minlength=len(data["class_names"]))
+    print("Labelled class counts:", {str(n): int(c) for n, c in zip(data["class_names"], counts)})
+    print(f"Unlabelled per-dimension mean (max |.|): {np.abs(data['x_unlabelled'].mean(0)).max():.3f}, "
+          f"std range: {data['x_unlabelled'].std(0).min():.2f} - {data['x_unlabelled'].std(0).max():.2f}")
 
 
 def main():
     cfg = CliMixtureConfig()
 
     data = data_generator.generate(cfg)
+
+    cfg.out.parent.mkdir(parents=True, exist_ok=True)  # np.savez does not create folders
     np.savez_compressed(cfg.out, **data)
 
-    # Quick sanity checks
-    Xu = data["x_unlabelled"]
-    print(f"Saved {cfg.out}")
-    print(f"Unlabelled: {Xu.shape}, labelled: {data['x_labelled'].shape}")
-    print(f"Aggregate mean (max |.|): {np.abs(Xu.mean(0)).max():.3f}")
-    print(f"Aggregate std range: {Xu.std(0).min():.2f} - {Xu.std(0).max():.2f}")
-    print("Labelled class counts:", np.bincount(data["y_labelled"], minlength=cfg.n_classes))
-    print("Component weights:", np.round(data["mixture_weights"], 3))
-
     if cfg.plot:
-        ax = plot_umap.make_plot(data["x_unlabelled"], data["x_labelled"],data["y_labelled"])
-        plt.show()
+        # imported here so that --no-plot does not need matplotlib / umap-learn
+        from matplotlib import pyplot as plt
+        from plot import plot_umap
 
-        save_plot = False
-        if save_plot:
-            plt.savefig(TBD, dpi=600)
-            print(f"Saved {args.out}")
+        plot_umap.make_plot(data["x_unlabelled"], data["x_labelled"], data["y_labelled"])
+        if cfg.plot_out:
+            cfg.plot_out.parent.mkdir(parents=True, exist_ok=True)
+            plt.savefig(cfg.plot_out, dpi=200)
+            print(f"Saved {cfg.plot_out}")
+        else:
+            plt.show()
 
         plt.show()
 
