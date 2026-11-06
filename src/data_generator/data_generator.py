@@ -54,7 +54,7 @@ def generate_points(mixture: Mixture, n: int, rng: np.random.Generator,
 
     Returns
     -------
-    X : numpy.ndarray, shape (n, mixture.latent_dim)
+    data : numpy.ndarray, shape (n, mixture.latent_dim)
         The sampled points.
     y : numpy.ndarray of int, shape (n,)
         `label`, repeated for every point (``-1`` if the points are unlabelled).

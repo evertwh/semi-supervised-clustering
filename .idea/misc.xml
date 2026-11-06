@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="uv (data-generator)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="uv (data-generator)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="uv (semi-supervised-clustering)" project-jdk-type="Python SDK" />
 </project>
